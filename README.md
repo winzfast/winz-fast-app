@@ -1,4 +1,4 @@
-# winz-fast-app
+# winz-fast-app (FE app)
 # Team members:
 # 1. Lê Gia Minh Thắng
 # 2. Trần Hoàng Nhân
