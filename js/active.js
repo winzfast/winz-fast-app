@@ -398,47 +398,47 @@
 
   /*============= Register Form ==============*/
 
-  function registerForm() {
-    var trigger = $(".accountbox-trigger"),
-      container = $(".accountbox-wrapper");
-    $('<div class="body-overlay"></div>').prependTo(container);
-
-    trigger.on("click", function (e) {
-      e.preventDefault();
-      container.addClass("is-visible");
-    });
-
-    $(".body-overlay").on("click", function () {
-      container.removeClass("is-visible");
-    });
-
-    $("span.accountbox-close-button").on("click", function () {
-      container.removeClass("is-visible");
-    });
-  }
-  registerForm();
+  // function registerForm() {
+  //   var trigger = $(".accountbox-trigger"),
+  //     container = $(".accountbox-wrapper");
+  //   $('<div class="body-overlay"></div>').prependTo(container);
+  //
+  //   trigger.on("click", function (e) {
+  //     e.preventDefault();
+  //     container.addClass("is-visible");
+  //   });
+  //
+  //   $(".body-overlay").on("click", function () {
+  //     container.removeClass("is-visible");
+  //   });
+  //
+  //   $("span.accountbox-close-button").on("click", function () {
+  //     container.removeClass("is-visible");
+  //   });
+  // }
+  // registerForm();
 
   /*============= Login Form ==============*/
 
-  function logInForm() {
-    var trigger = $(".login-trigger"),
-      container = $(".login-wrapper");
-    $('<div class="body-overlay"></div>').prependTo(container);
-
-    trigger.on("click", function (e) {
-      e.preventDefault();
-      container.addClass("is-visible");
-    });
-
-    $(".body-overlay").on("click", function () {
-      container.removeClass("is-visible");
-    });
-
-    $("span.accountbox-close-button").on("click", function () {
-      container.removeClass("is-visible");
-    });
-  }
-  logInForm();
+  // function logInForm() {
+  //   var trigger = $(".login-trigger"),
+  //     container = $(".login-wrapper");
+  //   $('<div class="body-overlay"></div>').prependTo(container);
+  //
+  //   trigger.on("click", function (e) {
+  //     e.preventDefault();
+  //     container.addClass("is-visible");
+  //   });
+  //
+  //   $(".body-overlay").on("click", function () {
+  //     container.removeClass("is-visible");
+  //   });
+  //
+  //   $("span.accountbox-close-button").on("click", function () {
+  //     container.removeClass("is-visible");
+  //   });
+  // }
+  // logInForm();
 
   /*============= Checkout Login/Register Toggle ==============*/
 
