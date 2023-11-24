@@ -188,16 +188,17 @@
 <div class="container-fluid al">
     <div id="clock"></div>
     <Br>
-    <p class="timkiemnhanvien"><b>TÌM KIẾM NGƯỜI DÙNG:</b></p><Br><Br>
-    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Nhập tên nhân viên cần tìm...">
-    <i class="fa fa-search" aria-hidden="true"></i>
+    <p class="timkiemnhanvien"><b>TÌM KIẾM NGƯỜI DÙNG:</b></p><Br>
+    <!--    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Nhập tên nhân viên cần tìm...">-->
+    <label for="myInput"><input type="text" id="myInput" placeholder="Nhập tên nhân viên cần tìm..." value=""></label>
 
+    <button onclick="findUser()">Find User</button>
+    <button onclick="loadData()">Show User List</button>
+
+    <!--    <i class="fa fa-search" aria-hidden="true"></i>-->
     <form action="">
 
     </form>
-    <b>CHỨC NĂNG CHÍNH:</b><Br>
-    <button class="nv btn add-new" type="button" data-toggle="tooltip" data-placement="top"
-            title="Thêm Nhân Viên"><i class="fas fa-user-plus"></i></button>
 
     <div class="table-title">
         <div class="row">
@@ -208,6 +209,7 @@
     <table class="table table-bordered" id="myTable">
         <thead>
         <tr class="ex">
+            <th>ID</th>
             <th width="auto">Tên Người Dùng</th>
             <th>Ngày Sinh</th>
             <th>Địa Chỉ</th>
@@ -245,6 +247,7 @@
 <script src="jquery.min.js"></script>
 <script type="text/javascript">
 
+
     //Hiển thị
     $(document).ready(function () {
         loadData()
@@ -252,6 +255,7 @@
 
     function loadData() {
         let content = "";
+
         $.ajax({
             type: 'GET',
             url: 'http://localhost:8080/api/admin/user-list',
@@ -260,6 +264,7 @@
                 for (let i = 0; i < data.length; i++) {
                     content += `
                         <tr>
+                        <td id="userIdData">${data[i].id}</td>
                         <td>${data[i].username}</td>
                         <td>${data[i].dateOfBirth}</td>
                         <td>${data[i].address}</td>
@@ -268,7 +273,7 @@
                         <td>
                         <a class="add" title="Lưu Lại" data-toggle="tooltip"><i class="fa fa-floppy-o"
                                 aria-hidden="true"></i></a>
-                        <a class="edit" title="Sửa" data-toggle="tooltip"><i class="fa fa-pencil"
+                        <a class="edit" title="Sửa" data-toggle="tooltip" onclick="deleteUser()"><i class="fa fa-pencil"
                                 aria-hidden="true"></i></a>
                         <a class="delete" title="Xóa" data-toggle="tooltip"><i class="fa fa-trash-o"
                                 aria-hidden="true"></i></a>
@@ -277,32 +282,68 @@
                     `
                 }
                 console.log(data)
-            document.getElementById("showUser").innerHTML=content;
-
-
+                document.getElementById("showUser").innerHTML = content;
             }
         });
     }
 
     //Tìm kiếm
-    function myFunction() {
-        var input, filter, table, tr, td, i, txtValue;
-        input = document.getElementById("myInput");
-        filter = input.value.toUpperCase();
-        table = document.getElementById("myTable");
-        tr = table.getElementsByTagName("tr");
-        for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[0];
-            if (td) {
-                txtValue = td.textContent || td.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
+    // function myFunction() {
+    //     var input, filter, table, tr, td, i, txtValue;
+    //     input = document.getElementById("myInput");
+    //     filter = input.value.toUpperCase();
+    //     table = document.getElementById("myTable");
+    //     tr = table.getElementsByTagName("tr");
+    //     for (i = 0; i < tr.length; i++) {
+    //         td = tr[i].getElementsByTagName("td")[0];
+    //         if (td) {
+    //             txtValue = td.textContent || td.innerText;
+    //             if (txtValue.toUpperCase().indexOf(filter) > -1) {
+    //                 tr[i].style.display = "";
+    //             } else {
+    //                 tr[i].style.display = "none";
+    //             }
+    //         }
+    //     }
+    // }
+
+
+    function findUser() {
+        var input = document.getElementById("myInput").value;
+        let content = "";
+
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:8080/api/admin/find-user/" + input,
+            data: JSON.stringify(input),
+            contentType: "application/json",
+            success: function (data) {
+                for (let i = 0; i < data.length; i++) {
+                    content += `
+                        <tr>
+                        <td id="userIdData">${data[i].id}</td>
+                        <td>${data[i].username}</td>
+                        <td>${data[i].dateOfBirth}</td>
+                        <td>${data[i].address}</td>
+                        <td>${data[i].email}</td>
+                        <td>${data[i].phoneNumber}</td>
+                        <td>
+                        <a class="add" title="Lưu Lại" data-toggle="tooltip"><i class="fa fa-floppy-o"
+                                aria-hidden="true"></i></a>
+                        <a class="edit" title="Sửa" data-toggle="tooltip" onclick="deleteUser()"><i class="fa fa-pencil"
+                                aria-hidden="true"></i></a>
+                        <a class="delete" title="Xóa" data-toggle="tooltip"><i class="fa fa-trash-o"
+                                aria-hidden="true"></i></a>
+                        </td>
+                        </tr>
+                    `
                 }
+                console.log(data)
+                document.getElementById("showUser").innerHTML = content;
             }
-        }
+        });
     }
+
 
     //Lọc bảng
     function sortTable() {
@@ -416,6 +457,7 @@
                 $(".add-new").removeAttr("disabled");
             }
         });
+
         // Sửa
         $(document).on("click", ".edit", function () {
             $(this).parents("tr").find("td:not(:last-child)").each(function () {
@@ -430,13 +472,28 @@
                 swal("Thành Công!", "Bạn Đã Sửa Thành Công", "success");
             });
         });
+
         // Xóa
         $(document).on("click", ".delete", function () {
-            $(this).parents("tr").remove();
-            swal("Thành Công!", "Bạn Đã Xóa Thành Công", "success");
-            $(".add-new").removeAttr("disabled");
+            // $(this).parents("tr").remove();
+            // swal("Thành Công!", "Bạn Đã Xóa Thành Công", "success");
+            // $(".add-new").removeAttr("disabled");
+
+            let userId = document.getElementById("userIdData").value;
+
+            $.ajax({
+                type: "DELETE",
+                url: "http://localhost:8080/api/admin/user-list/user/delete/" + userId,
+                success: function (response) {
+                    console.log("User deleted successfully.");
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
         });
     });
+
     //Not use
     jQuery(function () {
         jQuery(".cog").click(function () {
