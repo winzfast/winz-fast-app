@@ -22,6 +22,14 @@ video {
   display: inline-block;
 }
 
+.corner-element {
+  position: fixed;
+  top: 10px; /* Điều chỉnh khoảng cách từ trên xuống */
+  right: 10px; /* Điều chỉnh khoảng cách từ phải sang trái */
+  /* Thêm các thuộc tính khác cho div của bạn */
+}
+
+
 audio:not([controls]) {
   display: none;
   height: 0;
