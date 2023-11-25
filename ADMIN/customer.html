@@ -246,9 +246,8 @@
 <script type="text/javascript">
 
 
-    //Hiển thị
     $(document).ready(function () {
-        loadData()
+        loadData();
     });
 
     function loadData() {
@@ -258,32 +257,92 @@
             type: 'GET',
             url: 'http://localhost:8080/api/admin/user-list',
             contentType: 'application/json',
-            success: function (data) {
+            success: function(data) {
                 for (let i = 0; i < data.length; i++) {
+                    const userId = data[i].id; // Lấy ID từ cột
                     content += `
-                        <tr>
-                        <td id="userIdData">${data[i].id}</td>
+                    <tr>
+                        <td>${data[i].id}</td>
                         <td>${data[i].username}</td>
                         <td>${data[i].dateOfBirth}</td>
                         <td>${data[i].address}</td>
                         <td>${data[i].email}</td>
                         <td>${data[i].phoneNumber}</td>
                         <td>
-                        <a class="add" title="Lưu Lại" data-toggle="tooltip"><i class="fa fa-floppy-o"
-                                aria-hidden="true"></i></a>
-                        <a class="edit" title="Sửa" data-toggle="tooltip" onclick="deleteUser()"><i class="fa fa-pencil"
-                                aria-hidden="true"></i></a>
-                        <a class="delete" title="Xóa" data-toggle="tooltip"><i class="fa fa-trash-o"
-                                aria-hidden="true"></i></a>
-                     </td>
-</tr>
-                    `
+                            <a class="save" title="Lưu Lại" data-toggle="tooltip" style="display: none;"><i class="fa fa-floppy-o" aria-hidden="true"></i></a>
+                            <a class="edit" title="Sửa" data-toggle="tooltip"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                            <a class="delete" title="Xóa" data-toggle="tooltip" href=""><i class="fa fa-trash-o" aria-hidden="true" onclick="deleteUser(${userId})"></i></a>
+                        </td>
+                    </tr>
+                `;
                 }
-                console.log(data)
+                console.log(data);
                 document.getElementById("showUser").innerHTML = content;
+
+                // Xử lý sự kiện khi nhấp vào nút "Sửa"
+                $(document).on('click', '.edit', function() {
+                    const row = $(this).closest('tr');
+                    row.find('.save').show();
+                    row.find('.edit').hide();
+                    row.find('td:not(:first-child):not(:last-child)').each(function() {
+                        const text = $(this).text();
+                        $(this).html(`<input type="text" class="form-control" value="${text}">`);
+                    });
+                });
+
+                // Xử lý sự kiện khi nhấp vào nút "Lưu"
+                $(document).on('click', '.save', function() {
+                    const row = $(this).closest('tr');
+                    const userId = row.find('td:first-child').text();
+                    const username = row.find('td:nth-child(2) input').val();
+                    const dateOfBirth = row.find('td:nth-child(3) input').val();
+                    const address = row.find('td:nth-child(4) input').val();
+                    const email = row.find('td:nth-child(5) input').val();
+                    const phoneNumber = row.find('td:nth-child(6) input').val();
+
+                    const updatedData = {
+                        id: userId,
+                        username: username,
+                        dateOfBirth: dateOfBirth,
+                        address: address,
+                        email: email,
+                        phoneNumber: phoneNumber
+                    };
+
+                    // Gửi dữ liệu cập nhật lên server
+                    $.ajax({
+                        type: 'POST',
+                        url: `http://localhost:8080/api/admin/user-list/user/save/${userId}`,
+                        contentType: 'application/json',
+                        data: JSON.stringify(updatedData),
+                        success: function(response) {
+                            console.log(response);
+                            // ...
+                        },
+                        error: function(error) {
+                            // Xử lý lỗi
+                            console.log(error);
+                            // ...
+                        }
+                    });
+
+                    // Đổi giao diện trở lại chế độ xem thông tin
+                    row.find('.save').hide();
+                    row.find('.edit').show();
+                    row.find('td:not(:first-child):not(:last-child)').each(function() {
+                        const value = $(this).find('input').val();
+                        $(this).html(value);
+                    });
+                });
+            },
+            error: function(error) {
+                // Xử lý lỗi khi không thể tải dữ liệu
+                console.log(error);
+                // ...
             }
         });
     }
+
     function findUser() {
         var input = document.getElementById("myInput").value;
         let content = "";
@@ -295,6 +354,7 @@
             contentType: "application/json",
             success: function (data) {
                 for (let i = 0; i < data.length; i++) {
+                    const userId = data[i].id; // Lấy ID từ cột
                     content += `
                     <tr>
                         <td id="userIdData">${data[i].id}</td>
@@ -307,9 +367,8 @@
                             <a class="add" title="Lưu Lại" data-toggle="tooltip">
                                 <i class="fa fa-floppy-o" aria-hidden="true"></i>
                             </a>
-                            <a class="delete" title="Xóa" data-toggle="tooltip">
-                                <i class="fa fa-trash-o" aria-hidden="true"></i>
-                            </a>
+                            <a class="delete" title="Xóa" data-toggle="tooltip" href=""><i class="fa fa-trash-o"
+                                aria-hidden="true" onclick="deleteUser(${userId})"></i></a>
                         </td>
                     </tr>
                 `;
@@ -321,32 +380,36 @@
         });
     }
 
-    function editUser(userId) {
-        // Gửi yêu cầu Ajax để lấy thông tin chi tiết về người dùng
+    function saveUser(userId, newData) {
         $.ajax({
-            type: 'POSt',
-            url: `http://localhost:8080/api/admin/user-list/user/save/${userId}`,
+            type: 'PUT',
+            url: `http://localhost:8080/api/admin/user-list/user/${userId}`,
+            data: JSON.stringify(newData),
             contentType: 'application/json',
-            success: function (userData) {
-                // Xử lý dữ liệu người dùng được trả về
-                console.log(userData);
-                // Thực hiện các thao tác cần thiết với thông tin chi tiết người dùng
+            success: function(response) {
+                console.log('User saved successfully');
+                // Thực hiện các thao tác cần thiết sau khi lưu thông tin người dùng
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    }
 
-                // Ví dụ: Hiển thị thông tin chi tiết người dùng trong một modal
-                $('#userModal').modal('show');
-                $('#userModal #username').val(userData.username);
-                $('#userModal #dateOfBirth').val(userData.dateOfBirth);
-                $('#userModal #address').val(userData.address);
-                $('#userModal #email').val(userData.email);
-                $('#userModal #phoneNumber').val(userData.phoneNumber);
+    //Xóa user
+    function deleteUser(userId) {
+        $.ajax({
+            type: 'DELETE',
+            url: `http://localhost:8080/api/admin/user-list/user/delete/${userId}`,
+            success: function (response) {
+                console.log('User deleted successfully');
+                // Thực hiện các thao tác cần thiết sau khi xóa người dùng
             },
             error: function (error) {
                 console.log(error);
             }
         });
     }
-
-
 
     //Thời Gian
     function time() {
@@ -389,46 +452,7 @@
         }
     }
 
-    //Thêm
-    $(document).ready(function () {
 
-
-        // Sửa
-        $(document).on("click", ".edit", function () {
-            $(this).parents("tr").find("td:not(:last-child)").each(function () {
-                $(this).html('<input type="text" class="form-control" value="' + $(this)
-                    .text() + '">');
-            });
-            $(this).parents("tr").find(".add, .edit").toggle();
-            $(".add-new").attr("disabled", "disabled");
-        });
-        jQuery(function () {
-            jQuery(".add").click(function () {
-                swal("Thành Công!", "Bạn Đã Sửa Thành Công", "success");
-            });
-        });
-
-        $(document).on("click", ".delete", function() {
-            var userId = $(this).attr("delete-id");
-            var deleteRow = $(this).closest("tr"); // Dòng này sẽ được xóa
-
-            $.ajax({
-                type: "DELETE",
-                url: "http://localhost:8080/api/admin/user-list/user/delete/{id}" + userId,
-                success: function(response) {
-                    // Xử lý thành công
-                    console.log(response);
-                    // Xóa dòng người dùng khỏi bảng
-                    deleteRow.remove();
-                },
-                error: function(error) {
-                    // Xử lý lỗi
-                    console.log(error);
-                    // Hiển thị thông báo lỗi hoặc thực hiện các thao tác khác khi xảy ra lỗi
-                }
-            });
-        });
-    });
 
 </script>
 
