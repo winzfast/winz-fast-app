@@ -48,40 +48,6 @@
 
 
     <script type="text/javascript">
-        $(document).ready(function () {
-            $('#submit').on('click', function () {
-                var fullName = $('#fullName').val();
-                var username = $('#username').val();
-
-
-                var data = {
-                    fullName: fullName,
-                    username: username,
-
-                };
-
-                $.ajax({
-                    type: 'POST',
-                    url: 'http://localhost:8081/api/admin/user-list/user/save/{id}',
-                    contentType: 'application/json',
-                    data: JSON.stringify(data),
-                    success: function (response) {
-                        console.log('Đăng nhập thành công!', response);
-                        console.log('Đăng nhập thành công!', response);
-                        window.location.href = 'customer.html';
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Đăng nhập không thành công:', error);
-
-                        if (xhr.status >= 400 && xhr.status < 500) {
-                            alert('Đăng nhập không hợp lệ');
-                        } else if (xhr.status >= 500) {
-                            alert('Lỗi server');
-                        }
-                    }
-                });
-            });
-        });
 
         //Phân Trang Cho Table
         function Pager(tableName, itemsPerPage) {
@@ -192,8 +158,13 @@
     <!--    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Nhập tên nhân viên cần tìm...">-->
     <label for="myInput"><input type="text" id="myInput" placeholder="Nhập tên nhân viên cần tìm..." value=""></label>
 
-    <button onclick="findUser()">Find User</button>
-    <button onclick="loadData()">Show User List</button>
+
+    <button onclick="window.findUser();">Find User</button>
+
+    <button onclick="loadData()">Show User List
+    </button>
+
+
     <form action="">
 
     </form>
@@ -209,6 +180,7 @@
         <tr class="ex">
             <th>ID</th>
             <th width="auto">Tên Người Dùng</th>
+            <th>Họ và Tên</th>
             <th>Ngày Sinh</th>
             <th>Địa Chỉ</th>
             <th>Email</th>
@@ -245,7 +217,6 @@
 <script src="jquery.min.js"></script>
 <script type="text/javascript">
 
-
     $(document).ready(function () {
         loadData();
     });
@@ -257,85 +228,49 @@
             type: 'GET',
             url: 'http://localhost:8080/api/admin/user-list',
             contentType: 'application/json',
-            success: function(data) {
+            success: function (data) {
                 for (let i = 0; i < data.length; i++) {
-                    const userId = data[i].id; // Lấy ID từ cột
+                    const userId = data[i].id;
+                    const dateOfBirth = new Date(data[i].dateOfBirth).toLocaleDateString(); // Convert date to string
+
                     content += `
-                    <tr>
-                        <td>${data[i].id}</td>
-                        <td>${data[i].username}</td>
-                        <td>${data[i].dateOfBirth}</td>
-                        <td>${data[i].address}</td>
-                        <td>${data[i].email}</td>
-                        <td>${data[i].phoneNumber}</td>
-                        <td>
-                            <a class="save" title="Lưu Lại" data-toggle="tooltip" style="display: none;"><i class="fa fa-floppy-o" aria-hidden="true"></i></a>
-                            <a class="edit" title="Sửa" data-toggle="tooltip"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                            <a class="delete" title="Xóa" data-toggle="tooltip" href=""><i class="fa fa-trash-o" aria-hidden="true" onclick="deleteUser(${userId})"></i></a>
-                        </td>
-                    </tr>
-                `;
+                        <tr>
+                            <td>${data[i].id}</td>
+                            <td>${data[i].username}</td>
+                            <td>${data[i].fullName}</td>
+                            <td>${dateOfBirth}</td>
+                            <td>${data[i].address}</td>
+                            <td>${data[i].email}</td>
+                            <td>${data[i].phoneNumber}</td>
+                            <td>
+                                <input type="hidden" class="username" value="${data[i].username}">
+                                <input type="hidden" class="password" value="${data[i].password}">
+                                <input type="hidden" class="text" value="${data[i].fullName}">
+                                <input type="hidden" class="date" value="${data[i].dateOfBirth}">
+                                <input type="hidden" class="address" value="${data[i].address}">
+                                <input type="hidden" class="email" value="${data[i].email}">
+                                <input type="hidden" class="phoneNumber" value="${data[i].phoneNumber}">
+                                <a class="save" title="Lưu Lại" data-toggle="tooltip" style="display: none;"><i class="fa fa-floppy-o" aria-hidden="true"></i></a>
+                                <a class="edit" title="Sửa" data-toggle="tooltip"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                <a class="delete" title="Xóa" data-toggle="tooltip" href=""><i class="fa fa-trash-o" aria-hidden="true" onclick="deleteUser(${userId})"></i></a>
+                            </td>
+                        </tr>
+                    `;
                 }
                 console.log(data);
                 document.getElementById("showUser").innerHTML = content;
 
-                // Xử lý sự kiện khi nhấp vào nút "Sửa"
-                $(document).on('click', '.edit', function() {
-                    const row = $(this).closest('tr');
-                    row.find('.save').show();
-                    row.find('.edit').hide();
-                    row.find('td:not(:first-child):not(:last-child)').each(function() {
-                        const text = $(this).text();
-                        $(this).html(`<input type="text" class="form-control" value="${text}">`);
-                    });
-                });
+                // // Xử lý sự kiện khi nhấp vào nút "Sửa"
+                // $(document).on('click', '.edit', handleEdit);
+                //
+                // // Xử lý sự kiện khi nhấp vào nút "Lưu"
+                // $(document).on('click', '.save', handleSave);
 
-                // Xử lý sự kiện khi nhấp vào nút "Lưu"
-                $(document).on('click', '.save', function() {
-                    const row = $(this).closest('tr');
-                    const userId = row.find('td:first-child').text();
-                    const username = row.find('td:nth-child(2) input').val();
-                    const dateOfBirth = row.find('td:nth-child(3) input').val();
-                    const address = row.find('td:nth-child(4) input').val();
-                    const email = row.find('td:nth-child(5) input').val();
-                    const phoneNumber = row.find('td:nth-child(6) input').val();
-
-                    const updatedData = {
-                        id: userId,
-                        username: username,
-                        dateOfBirth: dateOfBirth,
-                        address: address,
-                        email: email,
-                        phoneNumber: phoneNumber
-                    };
-
-                    // Gửi dữ liệu cập nhật lên server
-                    $.ajax({
-                        type: 'POST',
-                        url: `http://localhost:8080/api/admin/user-list/user/save/${userId}`,
-                        contentType: 'application/json',
-                        data: JSON.stringify(updatedData),
-                        success: function(response) {
-                            console.log(response);
-                            // ...
-                        },
-                        error: function(error) {
-                            // Xử lý lỗi
-                            console.log(error);
-                            // ...
-                        }
-                    });
-
-                    // Đổi giao diện trở lại chế độ xem thông tin
-                    row.find('.save').hide();
-                    row.find('.edit').show();
-                    row.find('td:not(:first-child):not(:last-child)').each(function() {
-                        const value = $(this).find('input').val();
-                        $(this).html(value);
-                    });
-                });
+                // Gắn sự kiện 'click' cho các nút "Sửa" và "Lưu" trong phần tử mới
+                $('.edit:last').click(handleEdit);
+                $('.save:last').click(handleSave);
             },
-            error: function(error) {
+            error: function (error) {
                 // Xử lý lỗi khi không thể tải dữ liệu
                 console.log(error);
                 // ...
@@ -348,51 +283,125 @@
         let content = "";
 
         $.ajax({
-            type: "GET",
-            url: "http://localhost:8080/api/admin/find-user/" + input,
-            data: JSON.stringify(input),
-            contentType: "application/json",
+            type: 'GET',
+            url: 'http://localhost:8080/api/admin/user-list/find-user/' + input,
+            contentType: 'application/json',
             success: function (data) {
                 for (let i = 0; i < data.length; i++) {
-                    const userId = data[i].id; // Lấy ID từ cột
+                    const userId = data[i].id;
+                    const dateOfBirth = new Date(data[i].dateOfBirth).toLocaleDateString(); // Convert date to string
+
                     content += `
-                    <tr>
-                        <td id="userIdData">${data[i].id}</td>
-                        <td>${data[i].username}</td>
-                        <td>${data[i].dateOfBirth}</td>
-                        <td>${data[i].address}</td>
-                        <td>${data[i].email}</td>
-                        <td>${data[i].phoneNumber}</td>
-                        <td>
-                            <a class="add" title="Lưu Lại" data-toggle="tooltip">
-                                <i class="fa fa-floppy-o" aria-hidden="true"></i>
-                            </a>
-                            <a class="delete" title="Xóa" data-toggle="tooltip" href=""><i class="fa fa-trash-o"
-                                aria-hidden="true" onclick="deleteUser(${userId})"></i></a>
-                        </td>
-                    </tr>
-                `;
+                        <tr>
+                            <td>${data[i].id}</td>
+                            <td>${data[i].username}</td>
+                            <td>${data[i].fullName}</td>
+                            <td>${dateOfBirth}</td>
+                            <td>${data[i].address}</td>
+                            <td>${data[i].email}</td>
+                            <td>${data[i].phoneNumber}</td>
+                            <td>
+                                <input type="hidden" class="username" value="${data[i].username}">
+                                <input type="hidden" class="password" value="${data[i].password}">
+                                <input type="hidden" class="text" value="${data[i].fullName}">
+                                <input type="hidden" class="date" value="${data[i].dateOfBirth}">
+                                <input type="hidden" class="address" value="${data[i].address}">
+                                <input type="hidden" class="email" value="${data[i].email}">
+                                <input type="hidden" class="phoneNumber" value="${data[i].phoneNumber}">
+                                <a class="save" title="Lưu Lại" data-toggle="tooltip" style="display: none;"><i class="fa fa-floppy-o" aria-hidden="true"></i></a>
+                                <a class="edit" title="Sửa" data-toggle="tooltip"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                <a class="delete" title="Xóa" data-toggle="tooltip" href=""><i class="fa fa-trash-o" aria-hidden="true" onclick="deleteUser(${userId})"></i></a>
+                            </td>
+                        </tr>
+                    `;
                 }
                 console.log(data);
                 document.getElementById("showUser").innerHTML = content;
 
+                // Gắn sự kiện 'click' lên phần tử cha chứa các nút "Sửa" và "Lưu"
+                $('.user-list').on('click', '.edit', handleEdit);
+                $('.user-list').on('click', '.save', handleSave);
+            },
+            error: function (error) {
+                // Xử lý lỗi khi không thể tải dữ liệu
+                console.log(error);
+                // ...
             }
         });
     }
 
-    function saveUser(userId, newData) {
+    function handleEdit() {
+        const row = $(this).closest('tr');
+        row.find('.save').show();
+        row.find('.edit').hide();
+
+        row.find('td:nth-child(4)').each(function () {
+            const oldValue = $(this).text(); // Sử dụng .text() thay vì .html()
+            const inputElement = $('<input type="date" class="form-control">');
+            inputElement.val(oldValue);
+            $(this).html(inputElement);
+        });
+
+        row.find('td:nth-child(6)').each(function () {
+            const oldValue = $(this).text(); // Sử dụng .text() thay vì .html()
+            const inputElement = $('<input type="email" class="form-control">');
+            inputElement.val(oldValue);
+            $(this).html(inputElement);
+        });
+
+        row.find('td:not(:first-child):not(:nth-child(2)):not(:nth-child(4)):not(:nth-child(6)):not(:last-child)').each(function () {
+            const oldValue = $(this).text();
+            const inputElement = $('<input type="text" class="form-control" value="' + oldValue + '">');
+            $(this).empty();
+            $(this).append(inputElement);
+        });
+    }
+
+    function handleSave() {
+        const row = $(this).closest('tr');
+        const userId = row.find('td:first-child').text();
+        const username = row.find('.username').val();
+        const password = row.find('.password').val();
+        const fullName = row.find('td:nth-child(3) input').val();
+        const dateOfBirth = row.find('td:nth-child(4) input').val();
+        const address = row.find('td:nth-child(5) input').val();
+        const email = row.find('td:nth-child(6) input').val();
+        const phoneNumber = row.find('td:nth-child(7) input').val();
+
+        const updatedData = {
+            id: userId,
+            username: username,
+            password: password,
+            fullName: fullName,
+            dateOfBirth: dateOfBirth,
+            address: address,
+            email: email,
+            phoneNumber: phoneNumber
+        };
+
+        // Send the updated data to the server
         $.ajax({
-            type: 'PUT',
-            url: `http://localhost:8080/api/admin/user-list/user/${userId}`,
-            data: JSON.stringify(newData),
+            type: 'POST',
+            url: `http://localhost:8080/api/admin/user-list/user/save/${userId}`,
             contentType: 'application/json',
-            success: function(response) {
-                console.log('User saved successfully');
-                // Thực hiện các thao tác cần thiết sau khi lưu thông tin người dùng
+            data: JSON.stringify(updatedData),
+            success: function (response) {
+                console.log(response);
+                // ...
             },
-            error: function(error) {
+            error: function (error) {
+                // Handle error
                 console.log(error);
+                // ...
             }
+        });
+
+        // Switch back to view mode
+        row.find('.save').hide();
+        row.find('.edit').show();
+        row.find('td:not(:first-child):not(:last-child)').each(function () {
+            const value = $(this).find('input').val() || $(this).find('input').attr('placeholder');
+            $(this).html(value);
         });
     }
 
@@ -451,7 +460,6 @@
             return i;
         }
     }
-
 
 
 </script>
