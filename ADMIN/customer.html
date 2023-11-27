@@ -336,14 +336,14 @@
         row.find('.edit').hide();
 
         row.find('td:nth-child(4)').each(function () {
-            const oldValue = $(this).text(); // Sử dụng .text() thay vì .html()
+            const oldValue = $(this).text();
             const inputElement = $('<input type="date" class="form-control">');
             inputElement.val(oldValue);
             $(this).html(inputElement);
         });
 
         row.find('td:nth-child(6)').each(function () {
-            const oldValue = $(this).text(); // Sử dụng .text() thay vì .html()
+            const oldValue = $(this).text();
             const inputElement = $('<input type="email" class="form-control">');
             inputElement.val(oldValue);
             $(this).html(inputElement);
@@ -356,6 +356,7 @@
             $(this).append(inputElement);
         });
     }
+
 
     function handleSave() {
         const row = $(this).closest('tr');
@@ -412,7 +413,6 @@
             url: `http://localhost:8080/api/admin/user-list/user/delete/${userId}`,
             success: function (response) {
                 console.log('User deleted successfully');
-                // Thực hiện các thao tác cần thiết sau khi xóa người dùng
             },
             error: function (error) {
                 console.log(error);
