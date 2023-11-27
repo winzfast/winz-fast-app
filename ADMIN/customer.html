@@ -1,0 +1,469 @@
+<!---
+
+
+
+              FILE NÀY LÀ FILE CŨ NHÉ  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+          integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="author" content="Bin-It">
+    <meta property="og:url"/>
+    <meta property="og:type" content="truongbinit"/>
+    <meta property="og:title" content="Website TruongBin"/>
+    <meta property="og:description" content="Welcome to my Website"/>
+
+    <title>Nhân Viên | Quản Lý Bán Hàng</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+          integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Latest compiled and minified CSS -->
+    <!--===============================================================================================-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <!--===============================================================================================-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <!--===============================================================================================-->
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <!--===============================================================================================-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css">
+    <!--===============================================================================================-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js"></script>
+    <!--===============================================================================================-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round|Open+Sans">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+    <script type="text/javascript">
+
+        //Phân Trang Cho Table
+        function Pager(tableName, itemsPerPage) {
+            this.tableName = tableName;
+            this.itemsPerPage = itemsPerPage;
+            this.currentPage = 1;
+            this.pages = 0;
+            this.inited = false;
+
+            this.showRecords = function (from, to) {
+                var rows = document.getElementById(tableName).rows;
+                for (var i = 1; i < rows.length; i++) {
+                    if (i < from || i > to)
+                        rows[i].style.display = 'none';
+                    else
+                        rows[i].style.display = '';
+                }
+            }
+
+            this.showPage = function (pageNumber) {
+                if (!this.inited) {
+                    alert("not inited");
+                    return;
+                }
+                var oldPageAnchor = document.getElementById('pg' + this.currentPage);
+                oldPageAnchor.className = 'pg-normal';
+
+                this.currentPage = pageNumber;
+                var newPageAnchor = document.getElementById('pg' + this.currentPage);
+                newPageAnchor.className = 'pg-selected';
+
+                var from = (pageNumber - 1) * itemsPerPage + 1;
+                var to = from + itemsPerPage - 1;
+                this.showRecords(from, to);
+            }
+
+            this.prev = function () {
+                if (this.currentPage > 1)
+                    this.showPage(this.currentPage - 1);
+            }
+
+            this.next = function () {
+                if (this.currentPage < this.pages) {
+                    this.showPage(this.currentPage + 1);
+                }
+            }
+
+            this.init = function () {
+                var rows = document.getElementById(tableName).rows;
+                var records = (rows.length - 1);
+                this.pages = Math.ceil(records / itemsPerPage);
+                this.inited = true;
+            }
+            this.showPageNav = function (pagerName, positionId) {
+                if (!this.inited) {
+                    alert("not inited");
+                    return;
+                }
+                var element = document.getElementById(positionId);
+
+                var pagerHtml = '<span onclick="' + pagerName +
+                    '.prev();" class="pg-normal">&#171</span> | ';
+                for (var page = 1; page <= this.pages; page++)
+                    pagerHtml += '<span id="pg' + page + '" class="pg-normal" onclick="' + pagerName +
+                        '.showPage(' + page + ');">' + page + '</span> | ';
+                pagerHtml += '<span onclick="' + pagerName + '.next();" class="pg-normal">&#187;</span>';
+
+                element.innerHTML = pagerHtml;
+            }
+        }
+    </script>
+</head>
+
+<body onload="time()">
+<script>
+    swal("Xin Chào Admin", "Chúc Bạn 1 Ngày Tốt Lành Nhé", "");
+</script>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a class="navbar-brand" href="#"><i class="fa fa-user-circle" aria-hidden="true"></i> TRANG QUẢN TRỊ</a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="#home" data-toggle="tooltip" data-placement="bottom"
+                                      title="NHÂN VIÊN">USER</a></li>
+
+                <li>
+                    <a href="#" data-toggle="tooltip" data-placement="bottom" title="TÀI KHOẢN"><b>Tài Khoản</b>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown">
+                        <li><a href="/ADMIN/login.html" data-toggle="tooltip" data-placement="bottom"
+                               title="ĐĂNG XUẤT"><b>Đăng xuất <i class="fas fa-sign-out-alt"></i></b></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container-fluid al">
+    <div id="clock"></div>
+    <Br>
+    <p class="timkiemnhanvien"><b>TÌM KIẾM NGƯỜI DÙNG:</b></p><Br>
+    <!--    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Nhập tên nhân viên cần tìm...">-->
+    <label for="myInput"><input type="text" id="myInput" placeholder="Nhập tên nhân viên cần tìm..." value=""></label>
+
+
+    <button onclick="window.findUser();">Find User</button>
+
+    <button onclick="loadData()">Show User List
+    </button>
+
+
+    <form action="">
+
+    </form>
+
+    <div class="table-title">
+        <div class="row">
+
+        </div>
+
+    </div>
+    <table class="table table-bordered" id="myTable">
+        <thead>
+        <tr class="ex">
+            <th>ID</th>
+            <th width="auto">Tên Người Dùng</th>
+            <th>Họ và Tên</th>
+            <th>Ngày Sinh</th>
+            <th>Địa Chỉ</th>
+            <th>Email</th>
+            <th>Số Điện Thoại</th>
+            <th width="5px; !important">Tính Năng</th>
+        </tr>
+        </thead>
+        <tbody id="showUser">
+
+        </tbody>
+    </table>
+    <div id="pageNavPosition" class="text-right"></div>
+    <script type="text/javascript">
+        var pager = new Pager('myTable', 5);
+        pager.init();
+        pager.showPageNav('pager', 'pageNavPosition');
+        pager.showPage(1);
+    </script>
+</div>
+<hr class="hr1">
+<div class="container-fluid end">
+    <div class="row text-center">
+        <div class="col-lg-12 link">
+            <i class="fab fa-facebook-f"></i>
+            <i class="fab fa-instagram"></i>
+            <i class="fab fa-youtube"></i>
+            <i class="fab fa-google"></i>
+        </div>
+        <div class="col-lg-12">
+            2023 CopyRight Winz Fast | Design by <a href="#">Group 1</a>
+        </div>
+    </div>
+</div>
+<script src="jquery.min.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        loadData();
+    });
+
+    function loadData() {
+        let content = "";
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:8080/api/admin/user-list',
+            contentType: 'application/json',
+            success: function (data) {
+                for (let i = 0; i < data.length; i++) {
+                    const userId = data[i].id;
+                    const dateOfBirth = new Date(data[i].dateOfBirth).toLocaleDateString(); // Convert date to string
+
+                    content += `
+                        <tr>
+                            <td>${data[i].id}</td>
+                            <td>${data[i].username}</td>
+                            <td>${data[i].fullName}</td>
+                            <td>${dateOfBirth}</td>
+                            <td>${data[i].address}</td>
+                            <td>${data[i].email}</td>
+                            <td>${data[i].phoneNumber}</td>
+                            <td>
+                                <input type="hidden" class="username" value="${data[i].username}">
+                                <input type="hidden" class="password" value="${data[i].password}">
+                                <input type="hidden" class="text" value="${data[i].fullName}">
+                                <input type="hidden" class="date" value="${data[i].dateOfBirth}">
+                                <input type="hidden" class="address" value="${data[i].address}">
+                                <input type="hidden" class="email" value="${data[i].email}">
+                                <input type="hidden" class="phoneNumber" value="${data[i].phoneNumber}">
+                                <a class="save" title="Lưu Lại" data-toggle="tooltip" style="display: none;"><i class="fa fa-floppy-o" aria-hidden="true"></i></a>
+                                <a class="edit" title="Sửa" data-toggle="tooltip"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                <a class="delete" title="Xóa" data-toggle="tooltip" href=""><i class="fa fa-trash-o" aria-hidden="true" onclick="deleteUser(${userId})"></i></a>
+                            </td>
+                        </tr>
+                    `;
+                }
+                console.log(data);
+                document.getElementById("showUser").innerHTML = content;
+
+                // // Xử lý sự kiện khi nhấp vào nút "Sửa"
+                // $(document).on('click', '.edit', handleEdit);
+                //
+                // // Xử lý sự kiện khi nhấp vào nút "Lưu"
+                // $(document).on('click', '.save', handleSave);
+
+                // Gắn sự kiện 'click' cho các nút "Sửa" và "Lưu" trong phần tử mới
+                $('.edit:last').click(handleEdit);
+                $('.save:last').click(handleSave);
+            },
+            error: function (error) {
+                // Xử lý lỗi khi không thể tải dữ liệu
+                console.log(error);
+                // ...
+            }
+        });
+    }
+
+    function findUser() {
+        var input = document.getElementById("myInput").value;
+        let content = "";
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:8080/api/admin/user-list/find-user/' + input,
+            contentType: 'application/json',
+            success: function (data) {
+                for (let i = 0; i < data.length; i++) {
+                    const userId = data[i].id;
+                    const dateOfBirth = new Date(data[i].dateOfBirth).toLocaleDateString(); // Convert date to string
+
+                    content += `
+                        <tr>
+                            <td>${data[i].id}</td>
+                            <td>${data[i].username}</td>
+                            <td>${data[i].fullName}</td>
+                            <td>${dateOfBirth}</td>
+                            <td>${data[i].address}</td>
+                            <td>${data[i].email}</td>
+                            <td>${data[i].phoneNumber}</td>
+                            <td>
+                                <input type="hidden" class="username" value="${data[i].username}">
+                                <input type="hidden" class="password" value="${data[i].password}">
+                                <input type="hidden" class="text" value="${data[i].fullName}">
+                                <input type="hidden" class="date" value="${data[i].dateOfBirth}">
+                                <input type="hidden" class="address" value="${data[i].address}">
+                                <input type="hidden" class="email" value="${data[i].email}">
+                                <input type="hidden" class="phoneNumber" value="${data[i].phoneNumber}">
+                                <a class="save" title="Lưu Lại" data-toggle="tooltip" style="display: none;"><i class="fa fa-floppy-o" aria-hidden="true"></i></a>
+                                <a class="edit" title="Sửa" data-toggle="tooltip"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                <a class="delete" title="Xóa" data-toggle="tooltip" href=""><i class="fa fa-trash-o" aria-hidden="true" onclick="deleteUser(${userId})"></i></a>
+                            </td>
+                        </tr>
+                    `;
+                }
+                console.log(data);
+                document.getElementById("showUser").innerHTML = content;
+
+                // Gắn sự kiện 'click' lên phần tử cha chứa các nút "Sửa" và "Lưu"
+                $('.user-list').on('click', '.edit', handleEdit);
+                $('.user-list').on('click', '.save', handleSave);
+            },
+            error: function (error) {
+                // Xử lý lỗi khi không thể tải dữ liệu
+                console.log(error);
+                // ...
+            }
+        });
+    }
+
+    function handleEdit() {
+        const row = $(this).closest('tr');
+        row.find('.save').show();
+        row.find('.edit').hide();
+
+        row.find('td:nth-child(4)').each(function () {
+            const oldValue = $(this).text(); // Sử dụng .text() thay vì .html()
+            const inputElement = $('<input type="date" class="form-control">');
+            inputElement.val(oldValue);
+            $(this).html(inputElement);
+        });
+
+        row.find('td:nth-child(6)').each(function () {
+            const oldValue = $(this).text(); // Sử dụng .text() thay vì .html()
+            const inputElement = $('<input type="email" class="form-control">');
+            inputElement.val(oldValue);
+            $(this).html(inputElement);
+        });
+
+        row.find('td:not(:first-child):not(:nth-child(2)):not(:nth-child(4)):not(:nth-child(6)):not(:last-child)').each(function () {
+            const oldValue = $(this).text();
+            const inputElement = $('<input type="text" class="form-control" value="' + oldValue + '">');
+            $(this).empty();
+            $(this).append(inputElement);
+        });
+    }
+
+    function handleSave() {
+        const row = $(this).closest('tr');
+        const userId = row.find('td:first-child').text();
+        const username = row.find('.username').val();
+        const password = row.find('.password').val();
+        const fullName = row.find('td:nth-child(3) input').val();
+        const dateOfBirth = row.find('td:nth-child(4) input').val();
+        const address = row.find('td:nth-child(5) input').val();
+        const email = row.find('td:nth-child(6) input').val();
+        const phoneNumber = row.find('td:nth-child(7) input').val();
+
+        const updatedData = {
+            id: userId,
+            username: username,
+            password: password,
+            fullName: fullName,
+            dateOfBirth: dateOfBirth,
+            address: address,
+            email: email,
+            phoneNumber: phoneNumber
+        };
+
+        // Send the updated data to the server
+        $.ajax({
+            type: 'POST',
+            url: `http://localhost:8080/api/admin/user-list/user/save/${userId}`,
+            contentType: 'application/json',
+            data: JSON.stringify(updatedData),
+            success: function (response) {
+                console.log(response);
+                // ...
+            },
+            error: function (error) {
+                // Handle error
+                console.log(error);
+                // ...
+            }
+        });
+
+        // Switch back to view mode
+        row.find('.save').hide();
+        row.find('.edit').show();
+        row.find('td:not(:first-child):not(:last-child)').each(function () {
+            const value = $(this).find('input').val() || $(this).find('input').attr('placeholder');
+            $(this).html(value);
+        });
+    }
+
+    //Xóa user
+    function deleteUser(userId) {
+        $.ajax({
+            type: 'DELETE',
+            url: `http://localhost:8080/api/admin/user-list/user/delete/${userId}`,
+            success: function (response) {
+                console.log('User deleted successfully');
+                // Thực hiện các thao tác cần thiết sau khi xóa người dùng
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+
+    //Thời Gian
+    function time() {
+        var today = new Date();
+        var weekday = new Array(7);
+        weekday[0] = "Chủ Nhật";
+        weekday[1] = "Thứ Hai";
+        weekday[2] = "Thứ Ba";
+        weekday[3] = "Thứ Tư";
+        weekday[4] = "Thứ Năm";
+        weekday[5] = "Thứ Sáu";
+        weekday[6] = "Thứ Bảy";
+        var day = weekday[today.getDay()];
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1;
+        var yyyy = today.getFullYear();
+        var h = today.getHours();
+        var m = today.getMinutes();
+        var s = today.getSeconds();
+        m = checkTime(m);
+        s = checkTime(s);
+        nowTime = h + ":" + m + ":" + s;
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+        today = day + ', ' + dd + '/' + mm + '/' + yyyy;
+        tmp = '<i class="fa fa-clock-o" aria-hidden="true"></i> <span class="date">' + today + ' | ' + nowTime +
+            '</span>';
+        document.getElementById("clock").innerHTML = tmp;
+        clocktime = setTimeout("time()", "1000", "Javascript");
+
+        function checkTime(i) {
+            if (i < 10) {
+                i = "0" + i;
+            }
+            return i;
+        }
+    }
+
+
+</script>
+
+</body>
+
+</html>
