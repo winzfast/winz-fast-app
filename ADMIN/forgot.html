@@ -53,8 +53,13 @@
 
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script>
+<<<<<<< HEAD
                 $(document).ready(function () {
                     $('#resetPasswordForm').on('submit', function (event) {
+=======
+                $(document).ready(function() {
+                    $('#resetPasswordForm').on('submit', function(event) {
+>>>>>>> 5c0440089633756fb71d6032c064834693f74e81
                         event.preventDefault(); // Ngăn chặn việc gửi submit mặc định của form
 
                         var email = $('#emailInput').val();
@@ -70,11 +75,19 @@
                             url: 'http://localhost:8080/api/auths/reset-password',
                             contentType: 'application/json',
                             data: JSON.stringify(data),
+<<<<<<< HEAD
                             success: function (response) {
                                 console.log('Thay đổi mật khẩu thành công!', response);
                                 window.location.href = 'customer.html';
                             },
                             error: function (xhr, status, error) {
+=======
+                            success: function(response) {
+                                console.log('Thay đổi mật khẩu thành công!', response);
+                                window.location.href = 'customer.html';
+                            },
+                            error: function(xhr, status, error) {
+>>>>>>> 5c0440089633756fb71d6032c064834693f74e81
                                 console.error('Thay đổi mật khẩu không thành công:', error);
 
                                 if (xhr.status >= 400 && xhr.status < 500) {
